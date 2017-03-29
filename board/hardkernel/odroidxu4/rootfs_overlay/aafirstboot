@@ -1,0 +1,36 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          aafirstboot
+# Required-Start:    $remote_fs $all
+# Required-Stop:
+# Default-Start:     2 3 4 5 S
+# Default-Stop:
+# Short-Description: First boot system setup
+### END INIT INFO
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+
+if [ -f /.first_boot ]; then
+	mkdir -p /media/boot
+	# ok, its the very first boot, we need to resize the disk.
+	p2_start=`fdisk -l /dev/mmcblk1 | grep mmcblk1p2 | awk '{print $4}'`
+	p2_finish=`fdisk -l /dev/mmcblk1 | grep sectors | awk '{printf $7}'`
+
+	fdisk -u /dev/mmcblk1 <<EOF
+p
+d
+2
+n
+p
+2
+$p2_start
+$(($p2_finish-1))
+p
+w
+EOF
+	rm -fr /.first_boot
+	sync
+	reboot
+else
+	resize2fs /dev/mmcblk1p2 && rm -fr /aafirstboot
+fi
