@@ -37,4 +37,8 @@ ifeq ($(BR2_PACKAGE_XLIB_LIBXRANDR),y)
 LIBCEC_DEPENDENCIES += xlib_libXrandr
 endif
 
+ifeq ($(BR2_PACKAGE_ODROID_FIRMWARE_XU4),y)
+LIBCEC_CONF_OPTS += -DHAVE_EXYNOS_API=1
+endif
+
 $(eval $(cmake-package))
