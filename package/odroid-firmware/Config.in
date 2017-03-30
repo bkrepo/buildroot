@@ -1,0 +1,27 @@
+config BR2_PACKAGE_ODROID_FIRMWARE
+	bool "odroid-firmware"
+	depends on BR2_aarch64 || BR2_arm
+	help
+	  ODROID Firmware
+	  Pre-compiled binaries of the current bootloader
+
+	  https://github.com/hardkernel/u-boot_firmware
+
+if BR2_PACKAGE_ODROID_FIRMWARE
+
+choice
+	bool "ODROID Model"
+	default BR2_PACKAGE_ODROID_FIRMWARE_XU4
+	help
+	  Different firmware files by ODROID model:
+	    - ODROID-XU4 Firmware
+
+config BR2_PACKAGE_ODROID_FIRMWARE_XU4
+	bool "ODROID-XU4"
+	depends on BR2_PACKAGE_ODROID_FIRMWARE
+	help
+	  ODROID-XU4 firmware binaries to boot: bl1, bl2 and tzsw
+
+endchoice
+
+endif # BR2_PACKAGE_ODROID_FIRMWARE
