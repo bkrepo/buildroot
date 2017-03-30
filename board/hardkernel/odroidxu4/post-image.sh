@@ -15,15 +15,11 @@ genimage                           \
 	--outputpath "${BINARIES_DIR}" \
 	--config "${GENIMAGE_CFG}"
 
-# Download firmwares
-wget https://github.com/hardkernel/u-boot/raw/odroidxu3-v2012.07/sd_fuse/hardkernel/bl1.bin.hardkernel -O ${BINARIES_DIR}/bl1.bin
-wget https://github.com/hardkernel/u-boot/raw/odroidxu3-v2012.07/sd_fuse/hardkernel/bl2.bin.hardkernel -O ${BINARIES_DIR}/bl2.bin
-wget https://github.com/hardkernel/u-boot/raw/odroidxu3-v2012.07/sd_fuse/hardkernel/tzsw.bin.hardkernel -O ${BINARIES_DIR}/tzsw.bin
-
 # Write u-boot and firmwares to image file
-dd if=${BINARIES_DIR}/bl1.bin of=${BINARIES_DIR}/sdcard.img seek=1 conv=fsync,notrunc
-dd if=${BINARIES_DIR}/bl2.bin of=${BINARIES_DIR}/sdcard.img seek=31 conv=fsync,notrunc
+dd if=${BINARIES_DIR}/odroid-firmware/bl1.bin of=${BINARIES_DIR}/sdcard.img seek=1 conv=fsync,notrunc
+dd if=${BINARIES_DIR}/odroid-firmware/bl2.bin of=${BINARIES_DIR}/sdcard.img seek=31 conv=fsync,notrunc
 dd if=${BINARIES_DIR}/u-boot.bin of=${BINARIES_DIR}/sdcard.img seek=63 conv=fsync,notrunc
-dd if=${BINARIES_DIR}/tzsw.bin of=${BINARIES_DIR}/sdcard.img seek=719 conv=fsync,notrunc
+dd if=${BINARIES_DIR}/odroid-firmware/tzsw.bin of=${BINARIES_DIR}/sdcard.img seek=719 conv=fsync,notrunc
+
 # Clean U-boot environment area
 dd if=/dev/zero of=${BINARIES_DIR}/sdcard.img seek=1231 count=32 bs=512 conv=fsync,notrunc
