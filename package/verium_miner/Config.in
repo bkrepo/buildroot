@@ -1,0 +1,10 @@
+config BR2_PACKAGE_VERIUM_MINER
+	bool "verium_miner"
+	select BR2_PACKAGE_ZLIB
+	select BR2_PACKAGE_LIBCURL
+	select BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_JANSSON
+	help
+	  Verium Miner			  
+
+	  https://github.com/effectsToCause/veriumMiner

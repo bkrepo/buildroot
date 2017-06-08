@@ -1,0 +1,29 @@
+From 47d8568a41a70361b0f6ae4a1a524e8f8f125a15 Mon Sep 17 00:00:00 2001
+From: Brian Kim <brian.kim@hardkernel.com>
+Date: Thu, 8 Jun 2017 14:41:18 +0900
+Subject: [PATCH 2/2] Remove MSC_VER conditional compile for buildroot
+
+---
+ crypto/oaes_lib.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/crypto/oaes_lib.c b/crypto/oaes_lib.c
+index 4cc7ae3..341a2c2 100644
+--- a/crypto/oaes_lib.c
++++ b/crypto/oaes_lib.c
+@@ -48,12 +48,10 @@ struct timeb {
+   short           dstflag;
+ };
+ 
+-#ifdef _MSC_VER
+ struct timezone {
+   int  tz_minuteswest; /* minutes W of Greenwich */
+   int  tz_dsttime;     /* type of dst correction */
+ };
+-#endif
+ 
+ // This was removed from POSIX 2008.
+ static int ftime(struct timeb* tb) {
+-- 
+2.7.4
+

@@ -1,0 +1,28 @@
+From ce452d465f41b791d38db8020349a0dae61e6b40 Mon Sep 17 00:00:00 2001
+From: Brian Kim <brian.kim@hardkernel.com>
+Date: Thu, 8 Jun 2017 14:40:19 +0900
+Subject: [PATCH 1/2] Change scrypt way for XU4
+
+---
+ algo/scrypt.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/algo/scrypt.c b/algo/scrypt.c
+index 84e12ae..765b72a 100644
+--- a/algo/scrypt.c
++++ b/algo/scrypt.c
+@@ -402,9 +402,8 @@ void scrypt_core(uint32_t *X, uint32_t *V, int N);
+ void scrypt_core(uint32_t *X, uint32_t *V, int N);
+ #if defined(__ARM_NEON__)
+ #undef HAVE_SHA256_4WAY
+-#define SCRYPT_MAX_WAYS 3
+-#define HAVE_SCRYPT_3WAY 1
+-#define scrypt_best_throughput() 3
++#define SCRYPT_MAX_WAYS 1
++#define scrypt_best_throughput() 1
+ void scrypt_core_3way(uint32_t *X, uint32_t *V, int N);
+ #endif
+ 
+-- 
+2.7.4
+
