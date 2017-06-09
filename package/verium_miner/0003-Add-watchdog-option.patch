@@ -1,0 +1,86 @@
+From efbf8a377bdf62cab0077f78b27cff6838b57fa1 Mon Sep 17 00:00:00 2001
+From: Brian Kim <brian.kim@hardkernel.com>
+Date: Fri, 9 Jun 2017 16:02:07 +0900
+Subject: [PATCH] Add watchdog option
+
+---
+ cpu-miner.c | 28 +++++++++++++++++++++++++++-
+ 1 file changed, 27 insertions(+), 1 deletion(-)
+
+diff --git a/cpu-miner.c b/cpu-miner.c
+index 79f762e..bf7066e 100644
+--- a/cpu-miner.c
++++ b/cpu-miner.c
+@@ -105,6 +105,7 @@ bool use_colors = true;
+ static bool opt_background = false;
+ bool opt_quiet = false;
+ bool opt_randomize = false;
++bool opt_watchdog = false;
+ static int opt_retries = -1;
+ static int opt_fail_pause = 10;
+ static int opt_time_limit = 0;
+@@ -241,7 +242,7 @@ static char const short_options[] =
+ #ifdef HAVE_SYSLOG_H
+ 	"S"
+ #endif
+-	"a:b:Bc:CDf:hm:n:p:Px:qr:R:s:t:T:o:u:O:V";
++	"a:b:Bc:CDf:hm:n:p:Px:qr:R:s:t:T:o:u:O:Vw";
+ 
+ static struct option const options[] = {
+ 	{ "algo", 1, NULL, 'a' },
+@@ -292,6 +293,7 @@ static struct option const options[] = {
+ 	{ "user", 1, NULL, 'u' },
+ 	{ "userpass", 1, NULL, 'O' },
+ 	{ "version", 0, NULL, 'V' },
++	{ "watchdog", 0, NULL, 'w' },
+ 	{ 0, 0, 0, 0 }
+ };
+ 
+@@ -1328,6 +1330,20 @@ static void *workio_thread(void *userdata)
+ 	return NULL;
+ }
+ 
++static void *watchdog_thread(void *userdata)
++{
++	FILE *wdt_fp = NULL;
++
++	while (1) {
++		wdt_fp = fopen("/dev/watchdog", "w");
++		fwrite("3", 1, 1, wdt_fp);
++		fclose(wdt_fp);
++		sleep(5);
++	}
++
++	return NULL;
++}
++
+ static bool get_work(struct thr_info *thr, struct work *work)
+ {
+ 	struct workio_cmd *wc;
+@@ -2473,6 +2489,9 @@ void parse_arg(int key, char *arg)
+ 	case 1024:
+ 		opt_randomize = true;
+ 		break;
++	case 'w':
++		opt_watchdog = true;
++		break;
+ 	case 'V':
+ 		show_version_and_exit();
+ 	case 'h':
+@@ -2809,6 +2828,13 @@ int main(int argc, char *argv[]) {
+ 		}
+ 	}
+ 
++	if (opt_watchdog) {
++		if (thread_create(thr, watchdog_thread)) {
++			applog(LOG_ERR, "watchdog thread create failed");
++			return 1;
++		}
++	}
++
+ 	/* start mining threads */
+ 	for (i = 0; i < opt_n_threads; i++) {
+ 		thr = &thr_info[i];
+-- 
+2.7.4
+
