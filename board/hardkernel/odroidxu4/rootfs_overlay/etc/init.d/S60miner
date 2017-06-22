@@ -3,7 +3,7 @@
 case "$1" in
 	start)
 		chmod 666 /dev/watchdog
-		screen -dmS cgm cpuminer -w -o 192.168.0.10:33987 -O verium:odroid
+		screen -dmS cgm cpuminer --api-bind 0.0.0.0:4048 --api-remote -w -o 192.168.0.251:33987 -O verium:odroid
 		;;
 	*)
 		;;

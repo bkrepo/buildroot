@@ -1,0 +1,94 @@
+From c07c43d3e50a16052f8e2f20bab732f217cd75af Mon Sep 17 00:00:00 2001
+From: Brian Kim <brian.kim@hardkernel.com>
+Date: Thu, 22 Jun 2017 10:08:07 +0900
+Subject: [PATCH] Change API information KHS to H/m
+
+---
+ api.c       | 6 +++---
+ cpu-miner.c | 8 ++++----
+ miner.h     | 2 +-
+ 3 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/api.c b/api.c
+index fd1f085..0b4f7ec 100644
+--- a/api.c
++++ b/api.c
+@@ -95,7 +95,7 @@ static int bye = 0;
+ extern char *opt_api_allow;
+ extern int opt_api_listen; /* port */
+ extern int opt_api_remote;
+-extern uint64_t global_hashrate;
++extern double global_hashrate;
+ extern uint32_t solved_count;
+ extern uint32_t accepted_count;
+ extern uint32_t rejected_count;
+@@ -149,11 +149,11 @@ static char *getsummary(char *params)
+ 
+ 	*buffer = '\0';
+ 	sprintf(buffer, "NAME=%s;VER=%s;API=%s;"
+-		"ALGO=%s;CPUS=%d;KHS=%.2f;SOLV=%d;ACC=%d;REJ=%d;"
++		"ALGO=%s;CPUS=%d;H/m=%.2f;SOLV=%d;ACC=%d;REJ=%d;"
+ 		"ACCMN=%.3f;DIFF=%.6f;TEMP=%.1f;FAN=%d;FREQ=%d;"
+ 		"UPTIME=%.0f;TS=%u|",
+ 		PACKAGE_NAME, PACKAGE_VERSION, APIVERSION,
+-		algo, opt_n_threads, (double)global_hashrate / 1000.0,
++		algo, opt_n_threads, global_hashrate * 60,
+ 		solved_count, accepted_count, rejected_count, accps, net_diff > 0. ? net_diff : stratum_diff,
+ 		cpu.cpu_temp, cpu.cpu_fan, cpu.cpu_clock,
+ 		uptime, (uint32_t) ts);
+diff --git a/cpu-miner.c b/cpu-miner.c
+index 75f47da..b660426 100644
+--- a/cpu-miner.c
++++ b/cpu-miner.c
+@@ -157,7 +157,7 @@ uint32_t solved_count = 0L;
+ uint32_t accepted_count = 0L;
+ uint32_t rejected_count = 0L;
+ double *thr_hashrates;
+-uint64_t global_hashrate = 0;
++double global_hashrate = 0;
+ double stratum_diff = 0.;
+ double net_diff = 0.;
+ double net_hashrate = 0.;
+@@ -816,7 +816,7 @@ static int share_result(int result, struct work *work, const char *reason)
+ 	result ? accepted_count++ : rejected_count++;
+ 	pthread_mutex_unlock(&stats_lock);
+ 
+-	global_hashrate = (uint64_t) hashrate;
++	global_hashrate = hashrate;
+ 
+ 	if (!net_diff || sharediff < net_diff) {
+ 		flag = use_colors ?
+@@ -1734,7 +1734,7 @@ static void *miner_thread(void *userdata)
+ 				}
+ 				if (opt_benchmark) {
+ 					char rate[32];
+-					format_hashrate((double)global_hashrate, rate);
++					format_hashrate(global_hashrate, rate);
+ 					applog(LOG_NOTICE, "Benchmark: %s", rate);
+ 					fprintf(stderr, "%llu\n", (long long unsigned int) global_hashrate);
+ 				} else {
+@@ -1800,7 +1800,7 @@ static void *miner_thread(void *userdata)
+                     applog(LOG_NOTICE, "Total: %s H/m", s);
+ 					break;
+ 				}
+-				global_hashrate = (uint64_t) hashrate;
++				global_hashrate = hashrate;
+ 			}
+ 		}
+ 
+diff --git a/miner.h b/miner.h
+index d1e3c86..24d5d70 100644
+--- a/miner.h
++++ b/miner.h
+@@ -308,7 +308,7 @@ extern int num_cpus;
+ extern struct work_restart *work_restart;
+ extern uint32_t opt_work_size;
+ extern double *thr_hashrates;
+-extern uint64_t global_hashrate;
++extern double global_hashrate;
+ extern double stratum_diff;
+ extern double net_diff;
+ extern double net_hashrate;
+-- 
+2.7.4
+

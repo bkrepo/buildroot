@@ -1,0 +1,25 @@
+From 373cb506009f2ee7b5c43dbd97cb625bb3d82eea Mon Sep 17 00:00:00 2001
+From: Brian Kim <brian.kim@hardkernel.com>
+Date: Thu, 22 Jun 2017 10:54:45 +0900
+Subject: [PATCH] Change getting CPU frequency index 0 to 4(Big core in XU4)
+
+---
+ sysinfos.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sysinfos.c b/sysinfos.c
+index 9fd4d3f..7cf6f6a 100644
+--- a/sysinfos.c
++++ b/sysinfos.c
+@@ -58,7 +58,7 @@ static float linux_cputemp(int core)
+ }
+ 
+ #define CPUFREQ_PATH \
+- "/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_cur_freq"
++ "/sys/devices/system/cpu/cpu4/cpufreq/cpuinfo_cur_freq"
+ static uint32_t linux_cpufreq(int core)
+ {
+ 	FILE *fd = fopen(CPUFREQ_PATH, "r");
+-- 
+2.7.4
+
