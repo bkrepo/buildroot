@@ -1,0 +1,73 @@
+From 394d294b146538e75cd9670e0d67e03cbd00ea41 Mon Sep 17 00:00:00 2001
+From: Brian Kim <brian.kim@hardkernel.com>
+Date: Tue, 4 Jul 2017 14:31:44 +0900
+Subject: [PATCH] Change uptime to system uptime from program uptime
+
+---
+ api.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
+
+diff --git a/api.c b/api.c
+index 0b4f7ec..80470b9 100644
+--- a/api.c
++++ b/api.c
+@@ -30,6 +30,7 @@
+ 
+ #include <sys/stat.h>
+ #include <sys/types.h>
++#include <sys/sysinfo.h>
+ 
+ #include "miner.h"
+ 
+@@ -89,7 +90,6 @@ static struct IP4ACCESS *ipaccess = NULL;
+ static const char *localaddr = "127.0.0.1";
+ static const char *UNAVAILABLE = " - API will not be available";
+ static char *buffer = NULL;
+-static time_t startup = 0;
+ static int bye = 0;
+ 
+ extern char *opt_api_allow;
+@@ -133,11 +133,11 @@ static void cpustatus(int thr_id)
+ static char *getsummary(char *params)
+ {
+ 	char algo[64]; *algo = '\0';
++	struct cpu_info cpu = { 0 };
+ 	time_t ts = time(NULL);
+-	double uptime = difftime(ts, startup);
+-	double accps = (60.0 * accepted_count) / (uptime ? uptime : 1.0);
++	struct sysinfo info;
+ 
+-	struct cpu_info cpu = { 0 };
++	sysinfo(&info);
+ #ifdef USE_MONITORING
+ 	cpu.has_monitoring = true;
+ 	cpu.cpu_temp = cpu_temp(0);
+@@ -150,13 +150,13 @@ static char *getsummary(char *params)
+ 	*buffer = '\0';
+ 	sprintf(buffer, "NAME=%s;VER=%s;API=%s;"
+ 		"ALGO=%s;CPUS=%d;H/m=%.2f;SOLV=%d;ACC=%d;REJ=%d;"
+-		"ACCMN=%.3f;DIFF=%.6f;TEMP=%.1f;FAN=%d;FREQ=%d;"
+-		"UPTIME=%.0f;TS=%u|",
++		"DIFF=%.6f;TEMP=%.1f;FAN=%d;FREQ=%d;"
++		"UPTIME=%ld;TS=%u|",
+ 		PACKAGE_NAME, PACKAGE_VERSION, APIVERSION,
+ 		algo, opt_n_threads, global_hashrate * 60,
+-		solved_count, accepted_count, rejected_count, accps, net_diff > 0. ? net_diff : stratum_diff,
++		solved_count, accepted_count, rejected_count, net_diff > 0. ? net_diff : stratum_diff,
+ 		cpu.cpu_temp, cpu.cpu_fan, cpu.cpu_clock,
+-		uptime, (uint32_t) ts);
++		info.uptime, (uint32_t) ts);
+ 	return buffer;
+ }
+ 
+@@ -708,7 +708,6 @@ void *api_thread(void *userdata)
+ {
+ 	struct thr_info *mythr = (struct thr_info*)userdata;
+ 
+-	startup = time(NULL);
+ 	api();
+ 	tq_freeze(mythr->q);
+ 
+-- 
+2.7.4
+
