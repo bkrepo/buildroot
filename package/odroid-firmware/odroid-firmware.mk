@@ -5,7 +5,7 @@
 ################################################################################
 
 ifeq ($(BR2_PACKAGE_ODROID_FIRMWARE_XU4),y)
-ODROID_FIRMWARE_VERSION = 59f879f9ead555ddee6a446d74a1eb594ff65948
+ODROID_FIRMWARE_VERSION = 503a120465ae3e43008366005f3a8c278215b354
 endif
 ODROID_FIRMWARE_SITE = $(call github,hardkernel,u-boot_firmware,$(ODROID_FIRMWARE_VERSION))
 ODROID_FIRMWARE_INSTALL_IMAGES = YES

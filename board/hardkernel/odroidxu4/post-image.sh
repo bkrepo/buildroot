@@ -19,7 +19,7 @@ genimage                           \
 dd if=${BINARIES_DIR}/odroid-firmware/bl1.bin of=${BINARIES_DIR}/sdcard.img seek=1 conv=fsync,notrunc
 dd if=${BINARIES_DIR}/odroid-firmware/bl2.bin of=${BINARIES_DIR}/sdcard.img seek=31 conv=fsync,notrunc
 dd if=${BINARIES_DIR}/u-boot.bin of=${BINARIES_DIR}/sdcard.img seek=63 conv=fsync,notrunc
-dd if=${BINARIES_DIR}/odroid-firmware/tzsw.bin of=${BINARIES_DIR}/sdcard.img seek=719 conv=fsync,notrunc
+dd if=${BINARIES_DIR}/odroid-firmware/tzsw.bin of=${BINARIES_DIR}/sdcard.img seek=1503 conv=fsync,notrunc
 
 # Clean U-boot environment area
-dd if=/dev/zero of=${BINARIES_DIR}/sdcard.img seek=1231 count=32 bs=512 conv=fsync,notrunc
+dd if=/dev/zero of=${BINARIES_DIR}/sdcard.img seek=2015 count=32 bs=512 conv=fsync,notrunc
